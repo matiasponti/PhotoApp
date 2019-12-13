@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutterphotoapp/SecondScreen.dart';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
@@ -11,51 +11,28 @@ void main() {
   ));
 }
 
-enum AppState {
-  free,
-  picked,
-  cropped,
-}
 
 class mainScreen extends StatefulWidget {
   _mainScreen createState() => _mainScreen();
 }
 
 class _mainScreen extends State<mainScreen> {
-  AppState state;
-  File imageFile;
-  String btnText="Pick Image";
+  File pickedImage;
 
-  @override
-  void initState() {
-    super.initState();
-    state = AppState.free;
-  }
-
-  Future pickImageGallery() async {
-    imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
-    if (imageFile != null) {
-      setState(() {
-
-        state = AppState.picked;
-        btnText="Crop Image";
-      });
-    }
-  }
-
-  Future cropImage() async {
+  getImageFile(ImageSource Source) async {
+    var image = await ImagePicker.pickImage(source: Source);
     File croppedFile = await ImageCropper.cropImage(
-      sourcePath: imageFile.path,
-      aspectRatioPresets: [
-        CropAspectRatioPreset.square,
-        CropAspectRatioPreset.ratio3x2,
-        CropAspectRatioPreset.original,
-        CropAspectRatioPreset.ratio4x3,
-        CropAspectRatioPreset.ratio16x9
-      ],
+        sourcePath: image.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ],
         androidUiSettings: AndroidUiSettings(
             toolbarTitle: 'Cropper',
-            toolbarColor: Colors.deepOrange,
+            toolbarColor: Colors.blueAccent,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
             lockAspectRatio: false),
@@ -63,27 +40,14 @@ class _mainScreen extends State<mainScreen> {
           minimumAspectRatio: 1.0,
         )
     );
-    if (croppedFile != null) {
-      imageFile = croppedFile;
-      setState(() {
-        state = AppState.cropped;
-        btnText="Clear Image";
-
-      });
-    }
+    setState(() {
+      pickedImage = croppedFile;
+      print(pickedImage.lengthSync());
+    });
+    if (_image != null) { Navigator.push(context,
+        MaterialPageRoute(builder:
+            (context)=> secondScreen(_image: _image,))); }
   }
-
-
-
-  Future getImageCamera() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
-    if ( image != null ) {
-      setState(() {
-        imageFile = image;
-      });
-    }  }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -102,16 +66,7 @@ class _mainScreen extends State<mainScreen> {
                     border: Border.all(color: Colors.black),
                   ),
                   child: IconButton(
-                    onPressed:() {if (state == AppState.free){
-      pickImageGallery();
-
-    }
-
-    else if (state == AppState.picked){
-      cropImage();
-
-    }
-    },
+                    onPressed: () => getImageFile(ImageSource.gallery),
                     tooltip: 'Pick Image',
                     icon: Icon(Icons.grid_on),
                   ),
@@ -125,7 +80,7 @@ class _mainScreen extends State<mainScreen> {
                   ),
                   margin: const EdgeInsets.only(top: 40.0),
                   child: IconButton(
-                    onPressed: getImageCamera,
+                    onPressed: () => getImageFile(ImageSource.camera),
                     tooltip: 'Pick Image',
                     icon: Icon(Icons.camera_alt),
                   ),
@@ -134,6 +89,5 @@ class _mainScreen extends State<mainScreen> {
             )));
   }
 
-  void _savedImage () {}
 
 }
