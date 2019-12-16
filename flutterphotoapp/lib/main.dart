@@ -44,16 +44,16 @@ class _mainScreen extends State<mainScreen> {
       pickedImage = croppedFile;
       print(pickedImage.lengthSync());
     });
-    if (_image != null) { Navigator.push(context,
+    if (pickedImage != null) { Navigator.push(context,
         MaterialPageRoute(builder:
-            (context)=> secondScreen(_image: _image,))); }
+            (context)=> secondScreen(pickedImage: pickedImage,))); }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Miiiii Foto'),
+          title: Text('Miiii Foto'),
         ),
         body: Center(
             child: Column(
