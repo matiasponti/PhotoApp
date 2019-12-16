@@ -6,6 +6,8 @@ import 'package:image_cropper/image_cropper.dart';
 
 
 class secondScreen extends StatefulWidget {
+  var pickedImage;
+  secondScreen({this.})
   _secondScreen createState() => _secondScreen();
 }
 
